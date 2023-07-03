@@ -21,11 +21,11 @@ services:
   project_backend:
     platform: linux/amd64
     build:
-      context: ./project_backend
+      context: ./social_network
       dockerfile: Dockerfile
     container_name: project_backend
     volumes:
-      - ./project_backend:/project_backend
+      - ./social_network:/social_network
     ports:
       - 8000:8000
     depends_on:
