@@ -1,0 +1,43 @@
+version: '3.7'
+
+services:
+  main_pg_db:
+    platform: linux/amd64
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    restart: always
+    volumes:
+      - project_pg_data:/var/lib/postgresql/data
+    hostname: main_pg_db
+    container_name: ${POSTGRES_MAIN_DB_HOST_NAME}
+    networks:
+      - project_network
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_MAIN_DB_PASSWORD}
+    env_file:
+      - ./.env
+
+  project_backend:
+    platform: linux/amd64
+    build:
+      context: ./project_backend
+      dockerfile: Dockerfile
+    container_name: project_backend
+    volumes:
+      - ./project_backend:/project_backend
+    ports:
+      - 8000:8000
+    depends_on:
+      - main_pg_db
+    networks:
+      - project_network
+    env_file:
+      - ./.env
+
+networks:
+  project_network:
+
+
+volumes:
+  project_pg_data:
