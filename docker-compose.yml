@@ -3,9 +3,11 @@ version: '3.7'
 services:
   main_pg_db:
     platform: linux/amd64
-    image: postgres:15-alpine
+    build:
+      context: ./Postgres
+      dockerfile: Dockerfile
     ports:
-      - "5432:5432"
+      - ${POSTGRES_MAIN_DB_PORT}:5432
     restart: always
     volumes:
       - project_pg_data:/var/lib/postgresql/data
@@ -23,6 +25,8 @@ services:
     build:
       context: ./social_network
       dockerfile: Dockerfile
+      args:
+        - PORT=${BACKEND_APP_PORT}
     container_name: project_backend
     volumes:
       - ./social_network:/social_network
@@ -34,6 +38,7 @@ services:
       - project_network
     env_file:
       - ./.env
+    command: python -u /social_network/manage.py runserver 0.0.0.0:${BACKEND_APP_PORT}
 
 networks:
   project_network:
