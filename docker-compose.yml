@@ -38,8 +38,9 @@ services:
       - project_network
     env_file:
       - ./.env
-    command: python -u /social_network/manage.py runserver 0.0.0.0:${BACKEND_APP_PORT}
-
+    command: >
+      sh -c "python /social_network/manage.py migrate &&
+             python /social_network/manage.py runserver 0.0.0.0:${BACKEND_APP_PORT}"
 networks:
   project_network:
 
