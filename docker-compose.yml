@@ -1,6 +1,17 @@
 version: '3.7'
 
 services:
+  frontend:
+    platform: linux/amd64
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: project_frontend
+    volumes:
+      - ./frontend:/frontend
+    ports:
+      - 3000:3000
+    
   main_pg_db:
     platform: linux/amd64
     build:
@@ -13,8 +24,6 @@ services:
       - project_pg_data:/var/lib/postgresql/data
     hostname: main_pg_db
     container_name: ${POSTGRES_MAIN_DB_HOST_NAME}
-    networks:
-      - project_network
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_MAIN_DB_PASSWORD}
     env_file:
@@ -34,15 +43,11 @@ services:
       - 8000:8000
     depends_on:
       - main_pg_db
-    networks:
-      - project_network
     env_file:
       - ./.env
     command: >
       sh -c "python /social_network/manage.py migrate &&
              python /social_network/manage.py runserver 0.0.0.0:${BACKEND_APP_PORT}"
-networks:
-  project_network:
 
 
 volumes:
