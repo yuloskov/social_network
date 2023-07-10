@@ -32,22 +32,23 @@ services:
   project_backend:
     platform: linux/amd64
     build:
-      context: ./social_network
+      context: ./backend
       dockerfile: Dockerfile
       args:
         - PORT=${BACKEND_APP_PORT}
     container_name: project_backend
     volumes:
-      - ./social_network:/social_network
+      - ./backend:/backend
     ports:
       - 8000:8000
     depends_on:
       - main_pg_db
     env_file:
       - ./.env
+    restart: always
     command: >
-      sh -c "python /social_network/manage.py migrate &&
-             python /social_network/manage.py runserver 0.0.0.0:${BACKEND_APP_PORT}"
+      sh -c "python /backend/manage.py migrate &&
+             python /backend/manage.py runserver 0.0.0.0:${BACKEND_APP_PORT}"
 
 
 volumes:
